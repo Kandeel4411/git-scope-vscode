@@ -1,7 +1,7 @@
 {
-  "name": "git-explorer",
-  "displayName": "Git Explorer",
-  "description": "Explorer view filtered to git-changed directories — browse and edit within them",
+  "name": "git-scope",
+  "displayName": "Git Scope",
+  "description": "Explorer filtered to git-changed directories — browse and edit within them",
   "version": "0.0.1",
   "engines": { "vscode": "^1.85.0" },
   "categories": ["Other"],
@@ -12,8 +12,8 @@
       "activitybar": [
         {
           "id": "gitExplorerContainer",
-          "title": "Git Explorer",
-          "icon": "$(source-control)"
+          "title": "Git Scope",
+          "icon": "assets/icon.svg"
         }
       ]
     },
