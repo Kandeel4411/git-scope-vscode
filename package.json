@@ -1,0 +1,107 @@
+{
+  "name": "git-explorer",
+  "displayName": "Git Explorer",
+  "description": "Explorer view filtered to git-changed directories — browse and edit within them",
+  "version": "0.0.1",
+  "engines": { "vscode": "^1.85.0" },
+  "categories": ["Other"],
+  "activationEvents": ["workspaceContains:.git"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "gitExplorerContainer",
+          "title": "Git Explorer",
+          "icon": "$(source-control)"
+        }
+      ]
+    },
+    "views": {
+      "gitExplorerContainer": [
+        {
+          "id": "gitExplorer",
+          "name": "Changed Directories"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "gitExplorer.refresh",
+        "title": "Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "gitExplorer.newFile",
+        "title": "New File...",
+        "icon": "$(new-file)"
+      },
+      {
+        "command": "gitExplorer.newFolder",
+        "title": "New Folder...",
+        "icon": "$(new-folder)"
+      },
+      {
+        "command": "gitExplorer.deleteItem",
+        "title": "Delete",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "gitExplorer.renameItem",
+        "title": "Rename...",
+        "icon": "$(edit)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "gitExplorer.refresh",
+          "when": "view == gitExplorer",
+          "group": "navigation"
+        },
+        {
+          "command": "gitExplorer.newFile",
+          "when": "view == gitExplorer",
+          "group": "navigation"
+        },
+        {
+          "command": "gitExplorer.newFolder",
+          "when": "view == gitExplorer",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "gitExplorer.newFile",
+          "when": "view == gitExplorer && viewItem == directory",
+          "group": "1_new@1"
+        },
+        {
+          "command": "gitExplorer.newFolder",
+          "when": "view == gitExplorer && viewItem == directory",
+          "group": "1_new@2"
+        },
+        {
+          "command": "gitExplorer.renameItem",
+          "when": "view == gitExplorer",
+          "group": "2_edit@1"
+        },
+        {
+          "command": "gitExplorer.deleteItem",
+          "when": "view == gitExplorer",
+          "group": "2_edit@2"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.3.0"
+  }
+}
