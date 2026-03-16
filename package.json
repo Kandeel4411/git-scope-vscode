@@ -4,9 +4,15 @@
   "publisher": "Kandeel4411",
   "description": "Explorer filtered to git-changed directories — browse and edit within them",
   "version": "0.0.2",
-  "engines": { "vscode": "^1.96.0" },
-  "categories": ["Other"],
-  "activationEvents": ["workspaceContains:.git"],
+  "engines": {
+    "vscode": "^1.110.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "workspaceContains:.git"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "viewsContainers": {
@@ -98,11 +104,12 @@
   "scripts": {
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "package": "vsce package"
+    "package": "vsce package --no-dependencies"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
-    "@types/vscode": "^1.96.0",
+    "@types/vscode": "^1.110.0",
+    "@vscode/vsce": "^3.7.1",
     "typescript": "^5.3.0"
   }
 }

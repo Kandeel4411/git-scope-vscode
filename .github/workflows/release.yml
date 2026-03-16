@@ -18,13 +18,13 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: npm install --save-dev @types/node @types/vscode typescript @vscode/vsce
+        run: npm ci
 
       - name: Compile
         run: npm run compile
 
       - name: Package
-        run: npx @vscode/vsce package --no-dependencies
+        run: npm run package
 
       - name: Get version
         id: version
