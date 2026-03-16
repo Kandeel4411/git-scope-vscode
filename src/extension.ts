@@ -8,7 +8,10 @@ export function activate(context: vscode.ExtensionContext) {
   const provider = new GitExplorerProvider();
 
   context.subscriptions.push(
-    vscode.window.registerTreeDataProvider('gitExplorer', provider),
+    vscode.window.createTreeView('gitExplorer', {
+      treeDataProvider: provider,
+      dragAndDropController: provider,
+    }),
     vscode.window.registerFileDecorationProvider(provider),
 
     vscode.commands.registerCommand('gitExplorer.refresh', () => provider.refresh()),

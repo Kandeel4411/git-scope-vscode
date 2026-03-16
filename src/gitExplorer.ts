@@ -36,8 +36,13 @@ export class GitNode extends vscode.TreeItem {
 }
 
 export class GitExplorerProvider
-  implements vscode.TreeDataProvider<GitNode>, vscode.FileDecorationProvider
+  implements
+    vscode.TreeDataProvider<GitNode>,
+    vscode.FileDecorationProvider,
+    vscode.TreeDragAndDropController<GitNode>
 {
+  readonly dropMimeTypes = ['application/vnd.code.tree.gitExplorer'];
+  readonly dragMimeTypes = ['application/vnd.code.tree.gitExplorer'];
   private _onDidChangeTreeData = new vscode.EventEmitter<GitNode | undefined | null>();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
@@ -128,6 +133,44 @@ export class GitExplorerProvider
     } catch {
       return [];
     }
+  }
+
+  // ── Drag and drop ──────────────────────────────────────────────────────────
+
+  handleDrag(source: readonly GitNode[], dataTransfer: vscode.DataTransfer): void {
+    dataTransfer.set(
+      'application/vnd.code.tree.gitExplorer',
+      new vscode.DataTransferItem(source),
+    );
+  }
+
+  async handleDrop(target: GitNode | undefined, dataTransfer: vscode.DataTransfer): Promise<void> {
+    const transferItem = dataTransfer.get('application/vnd.code.tree.gitExplorer');
+    if (!transferItem) return;
+
+    const sources: GitNode[] = transferItem.value;
+    const destDir = target
+      ? target.isDirectory
+        ? target.fsPath
+        : path.dirname(target.fsPath)
+      : this.workspaceRoot;
+
+    for (const source of sources) {
+      const destPath = path.join(destDir, path.basename(source.fsPath));
+      if (destPath === source.fsPath) continue;
+      // Prevent moving a directory into itself
+      if (source.isDirectory && destPath.startsWith(source.fsPath + path.sep)) continue;
+
+      try {
+        fs.renameSync(source.fsPath, destPath);
+      } catch (err: unknown) {
+        vscode.window.showErrorMessage(
+          `Failed to move "${source.label}": ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    }
+
+    this.refresh();
   }
 
   // ── File operations ────────────────────────────────────────────────────────
