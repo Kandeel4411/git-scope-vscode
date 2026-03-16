@@ -92,6 +92,25 @@ export function getChangesUnder(repoRoot: string, relDir: string): Map<string, G
   return map;
 }
 
+/** Returns the set of absolute paths that are gitignored. */
+export function getIgnoredPaths(repoRoot: string): Set<string> {
+  try {
+    const output = execSync(
+      'git ls-files --others --ignored --exclude-standard --directory',
+      { cwd: repoRoot, encoding: 'utf8' },
+    );
+    const ignored = new Set<string>();
+    for (const line of output.split('\n')) {
+      const trimmed = line.trim().replace(/\/$/, ''); // strip trailing slash from dirs
+      if (!trimmed) continue;
+      ignored.add(path.join(repoRoot, trimmed));
+    }
+    return ignored;
+  } catch {
+    return new Set();
+  }
+}
+
 /** Build a map of all changed absolute paths for quick lookup. */
 export function buildChangedPathSet(repoRoot: string): Map<string, GitChange> {
   const changes = getGitChanges(repoRoot);

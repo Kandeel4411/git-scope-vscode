@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
-import { getChangedRoots, buildChangedPathSet, GitChange } from './gitStatus';
+import { getChangedRoots, buildChangedPathSet, getIgnoredPaths, GitChange } from './gitStatus';
 
 export class GitNode extends vscode.TreeItem {
   constructor(
@@ -50,6 +50,7 @@ export class GitExplorerProvider
   readonly onDidChangeFileDecorations = this._onDidChangeFileDecorations.event;
 
   private changedPaths: Map<string, GitChange> = new Map();
+  private ignoredPaths: Set<string> = new Set();
   private workspaceRoot: string;
 
   constructor() {
@@ -60,6 +61,7 @@ export class GitExplorerProvider
   private loadChangedPaths() {
     if (!this.workspaceRoot) return;
     this.changedPaths = buildChangedPathSet(this.workspaceRoot);
+    this.ignoredPaths = getIgnoredPaths(this.workspaceRoot);
   }
 
   refresh(): void {
@@ -120,7 +122,7 @@ export class GitExplorerProvider
     try {
       const entries = fs.readdirSync(dirPath, { withFileTypes: true });
       return entries
-        .filter((e) => e.name !== '.git')
+        .filter((e) => e.name !== '.git' && !this.ignoredPaths.has(path.join(dirPath, e.name)))
         .map((e) => {
           const fullPath = path.join(dirPath, e.name);
           const change = this.changedPaths.get(fullPath);
