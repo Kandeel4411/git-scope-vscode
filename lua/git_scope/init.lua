@@ -11,6 +11,7 @@ local state = {
   filter_query = "",
   dir_cache = {},
   ignored_cache = {},
+  ignored_paths = {},
 }
 
 local defaults = {
@@ -109,6 +110,33 @@ local function parse_changed(root)
   return changed, root_list
 end
 
+local function load_ignored_paths(root)
+  local ignored = {}
+  local cmd = "git -C "
+    .. vim.fn.shellescape(root)
+    .. " status --porcelain=1 --ignored --untracked-files=all"
+  local out = vim.fn.systemlist(cmd)
+  if vim.v.shell_error ~= 0 then
+    return ignored
+  end
+
+  for _, line in ipairs(out) do
+    local xy = line:sub(1, 2)
+    if xy == "!!" then
+      local rel = vim.trim(line:sub(4))
+      if rel ~= "" then
+        if rel:find(" -> ", 1, true) then
+          local parts = vim.split(rel, " -> ", { plain = true })
+          rel = parts[#parts]
+        end
+        ignored[rel] = true
+      end
+    end
+  end
+
+  return ignored
+end
+
 local function is_dir(path)
   return vim.fn.isdirectory(path) == 1
 end
@@ -129,8 +157,22 @@ local function is_git_ignored(path)
   end
 
   local rel = to_relpath(path)
-  vim.fn.system({ "git", "-C", state.root, "check-ignore", "-q", rel })
-  local ignored = vim.v.shell_error == 0
+  local ignored = state.ignored_paths[rel] == true
+  if not ignored then
+    -- If an ignored directory is listed, all children should be hidden too.
+    local probe = rel
+    while probe and probe ~= "." do
+      local parent = vim.fs.dirname(probe)
+      if not parent or parent == "." or parent == probe then
+        break
+      end
+      if state.ignored_paths[parent] == true or state.ignored_paths[parent .. "/"] == true then
+        ignored = true
+        break
+      end
+      probe = parent
+    end
+  end
   state.ignored_cache[path] = ignored
   return ignored
 end
@@ -505,6 +547,7 @@ function M.open()
   state.filter_query = ""
   state.dir_cache = {}
   state.ignored_cache = {}
+  state.ignored_paths = load_ignored_paths(state.root)
   ensure_window()
   apply_keymaps()
   render()
