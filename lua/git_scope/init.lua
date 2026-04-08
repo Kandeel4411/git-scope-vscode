@@ -10,6 +10,7 @@ local state = {
   line_nodes = {},
   filter_query = "",
   dir_cache = {},
+  ignored_cache = {},
 }
 
 local defaults = {
@@ -85,6 +86,28 @@ local function is_dir(path)
   return vim.fn.isdirectory(path) == 1
 end
 
+local function to_relpath(path)
+  local root = (state.root or ""):gsub("/+$", "")
+  local prefix = root .. "/"
+  if path == root then
+    return "."
+  end
+  return path:gsub("^" .. vim.pesc(prefix), "")
+end
+
+local function is_git_ignored(path)
+  local cached = state.ignored_cache[path]
+  if cached ~= nil then
+    return cached
+  end
+
+  local rel = to_relpath(path)
+  vim.fn.system({ "git", "-C", state.root, "check-ignore", "-q", rel })
+  local ignored = vim.v.shell_error == 0
+  state.ignored_cache[path] = ignored
+  return ignored
+end
+
 local function scandir(path)
   local cached = state.dir_cache[path]
   if cached then
@@ -96,11 +119,13 @@ local function scandir(path)
   for _, name in ipairs(entries) do
     if name ~= ".git" then
       local full = join_path(path, name)
-      table.insert(out, {
-        name = name,
-        path = full,
-        is_dir = is_dir(full),
-      })
+      if not is_git_ignored(full) then
+        table.insert(out, {
+          name = name,
+          path = full,
+          is_dir = is_dir(full),
+        })
+      end
     end
   end
   table.sort(out, function(a, b)
@@ -391,6 +416,7 @@ function M.open()
   state.root = vim.loop.cwd()
   state.filter_query = ""
   state.dir_cache = {}
+  state.ignored_cache = {}
   ensure_window()
   apply_keymaps()
   render()
