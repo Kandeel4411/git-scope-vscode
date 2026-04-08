@@ -30,6 +30,33 @@ local defaults = {
 
 local config = vim.deepcopy(defaults)
 
+local ns = vim.api.nvim_create_namespace("git_scope_highlights")
+
+local function setup_highlights()
+  vim.api.nvim_set_hl(0, "GitScopeTitle", { default = true, link = "Title" })
+  vim.api.nvim_set_hl(0, "GitScopeDirectory", { default = true, link = "Directory" })
+  vim.api.nvim_set_hl(0, "GitScopeFile", { default = true, link = "Normal" })
+  vim.api.nvim_set_hl(0, "GitScopeMarker", { default = true, link = "Comment" })
+  vim.api.nvim_set_hl(0, "GitScopeBadgeModified", { default = true, link = "GitSignsChange" })
+  vim.api.nvim_set_hl(0, "GitScopeBadgeAdded", { default = true, link = "GitSignsAdd" })
+  vim.api.nvim_set_hl(0, "GitScopeBadgeDeleted", { default = true, link = "GitSignsDelete" })
+  vim.api.nvim_set_hl(0, "GitScopeBadgeRenamed", { default = true, link = "DiagnosticHint" })
+  vim.api.nvim_set_hl(0, "GitScopeBadgeUntracked", { default = true, link = "DiagnosticInfo" })
+  vim.api.nvim_set_hl(0, "GitScopeBadgeConflict", { default = true, link = "DiagnosticError" })
+end
+
+local function badge_hl_for(status)
+  local map = {
+    M = "GitScopeBadgeModified",
+    A = "GitScopeBadgeAdded",
+    D = "GitScopeBadgeDeleted",
+    R = "GitScopeBadgeRenamed",
+    U = "GitScopeBadgeUntracked",
+    C = "GitScopeBadgeConflict",
+  }
+  return map[status]
+end
+
 local function join_path(...)
   return table.concat({ ... }, "/"):gsub("//+", "/")
 end
@@ -207,6 +234,7 @@ local function render()
   end
 
   local lines = {}
+  local line_meta = {}
   state.line_nodes = {}
 
   local function collect_node_lines(node, depth)
@@ -247,6 +275,7 @@ local function render()
     title = title .. " [/" .. state.filter_query .. "]"
   end
   table.insert(lines, title)
+  line_meta[1] = { header = true }
   state.line_nodes[1] = { header = true }
 
   local changed, roots = parse_changed(state.root)
@@ -261,7 +290,31 @@ local function render()
     if root_matched then
       for i = 1, #root_lines do
         table.insert(lines, root_lines[i])
-        state.line_nodes[#lines] = root_nodes[i]
+        local lnum = #lines
+        state.line_nodes[lnum] = root_nodes[i]
+
+        local node = root_nodes[i]
+        local s = root_lines[i]
+        local prefix = s:match("^(%s*)") or ""
+        local marker_len = node.is_dir and 4 or 2 -- account for UTF-8 tree marker width
+        local name_start = #prefix + marker_len
+        local name_end = name_start + #node.name
+        local badge_start = nil
+        local badge_end = nil
+        local status = state.changed[node.path]
+        if status then
+          local badge = " [" .. status .. "]"
+          badge_start = #s - #badge
+          badge_end = #s
+        end
+        line_meta[lnum] = {
+          is_dir = node.is_dir,
+          name_start = name_start,
+          name_end = name_end,
+          badge_start = badge_start,
+          badge_end = badge_end,
+          status = status,
+        }
       end
     end
   end
@@ -269,6 +322,36 @@ local function render()
   vim.bo[state.buf].modifiable = true
   vim.api.nvim_buf_set_lines(state.buf, 0, -1, false, lines)
   vim.bo[state.buf].modifiable = false
+
+  vim.api.nvim_buf_clear_namespace(state.buf, ns, 0, -1)
+  for lnum = 1, #lines do
+    local meta = line_meta[lnum]
+    if meta and meta.header then
+      vim.api.nvim_buf_add_highlight(state.buf, ns, "GitScopeTitle", lnum - 1, 0, -1)
+    elseif meta then
+      local line = lines[lnum]
+      local node = state.line_nodes[lnum]
+      local marker_start = line:find("[^%s]") and (line:find("[^%s]") - 1) or 0
+      local marker_end = math.max((meta.name_start or 1) - 1, marker_start)
+      if marker_end > marker_start and node and node.is_dir then
+        vim.api.nvim_buf_add_highlight(state.buf, ns, "GitScopeMarker", lnum - 1, marker_start, marker_end)
+      end
+      vim.api.nvim_buf_add_highlight(
+        state.buf,
+        ns,
+        meta.is_dir and "GitScopeDirectory" or "GitScopeFile",
+        lnum - 1,
+        math.max((meta.name_start or 1) - 1, 0),
+        math.max((meta.name_end or #line), 0)
+      )
+      if meta.badge_start and meta.badge_end and meta.status then
+        local hl = badge_hl_for(meta.status)
+        if hl then
+          vim.api.nvim_buf_add_highlight(state.buf, ns, hl, lnum - 1, meta.badge_start, meta.badge_end)
+        end
+      end
+    end
+  end
 end
 
 local function open_node()
@@ -424,6 +507,7 @@ end
 
 function M.setup(opts)
   config = vim.tbl_deep_extend("force", vim.deepcopy(defaults), opts or {})
+  setup_highlights()
   vim.api.nvim_create_user_command("GitScope", function()
     M.open()
   end, {})
