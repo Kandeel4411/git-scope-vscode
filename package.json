@@ -59,6 +59,33 @@
         "icon": "$(edit)"
       }
     ],
+    "keybindings": [
+      {
+        "command": "gitExplorer.refresh",
+        "key": "shift+r",
+        "when": "view == gitExplorer && listFocus"
+      },
+      {
+        "command": "gitExplorer.newFile",
+        "key": "a",
+        "when": "view == gitExplorer && listFocus"
+      },
+      {
+        "command": "gitExplorer.newFolder",
+        "key": "shift+a",
+        "when": "view == gitExplorer && listFocus"
+      },
+      {
+        "command": "gitExplorer.renameItem",
+        "key": "r",
+        "when": "view == gitExplorer && listFocus"
+      },
+      {
+        "command": "gitExplorer.deleteItem",
+        "key": "d",
+        "when": "view == gitExplorer && listFocus"
+      }
+    ],
     "menus": {
       "view/title": [
         {

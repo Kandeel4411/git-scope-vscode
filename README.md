@@ -50,6 +50,55 @@ The view automatically refreshes when:
 
 ---
 
+## Keybindings (VS Code + Neovim)
+
+When the **Git Scope** tree is focused, these keys are available:
+
+| Key | Action |
+|-----|--------|
+| `Enter` / `l` | Open file / expand folder |
+| `h` | Collapse folder |
+| `a` | New file |
+| `A` | New folder |
+| `r` | Rename |
+| `d` | Delete |
+| `R` | Refresh |
+| `q` | Close Git Scope window (Neovim) |
+
+---
+
+## LazyVim / Neovim Support
+
+Git Scope now includes a native Neovim module at `lua/git_scope/init.lua` so you can use the same focused changed-files explorer flow in LazyVim.
+
+### Install in LazyVim
+
+Create `~/.config/nvim/lua/plugins/git-scope.lua`:
+
+```lua
+return {
+  {
+    "Kandeel4411/git-explorer-vscode",
+    config = function()
+      require("git_scope").setup()
+      vim.keymap.set("n", "<leader>gs", "<cmd>GitScope<cr>", { desc = "Open Git Scope" })
+    end,
+  },
+}
+```
+
+Then run `:Lazy sync` and restart Neovim.
+
+### Usage
+
+- Run `:GitScope` (or your mapped `<leader>gs`) in any git repo.
+- The panel opens in a left split and shows only changed top-level paths.
+- Expand folders to browse all contents, then use the same keybindings table above.
+
+> Note: the Neovim module shells out to `git status --porcelain`, so `git` must be available in your PATH.
+
+---
+
 ## Requirements
 
 - VS Code `1.85.0` or later
