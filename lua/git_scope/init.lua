@@ -238,11 +238,15 @@ local function is_git_ignored(path)
   end
 
   local rel = to_relpath(path)
-  local ignored = state.ignored_paths[rel] == true
+  local ignored = state.ignored_paths[rel] == true or state.ignored_paths[rel .. "/"] == true
   if not ignored then
     -- If an ignored directory is listed, all children should be hidden too.
     local probe = rel
     while probe and probe ~= "." do
+      if state.ignored_paths[probe] == true or state.ignored_paths[probe .. "/"] == true then
+        ignored = true
+        break
+      end
       local parent = vim.fs.dirname(probe)
       if not parent or parent == "." or parent == probe then
         break
@@ -517,6 +521,25 @@ local function open_node()
   open_path_in_editor(node.path)
 end
 
+local function mouse_open_node()
+  if not state.win or not vim.api.nvim_win_is_valid(state.win) then
+    return
+  end
+
+  local m = vim.fn.getmousepos()
+  local winid = tonumber(m.winid or 0)
+  local line = tonumber(m.line or 0)
+  if winid ~= state.win or line <= 0 then
+    return
+  end
+
+  vim.api.nvim_set_current_win(state.win)
+  local max_line = vim.api.nvim_buf_line_count(state.buf)
+  line = math.min(line, max_line)
+  vim.api.nvim_win_set_cursor(state.win, { line, 0 })
+  open_node()
+end
+
 local function toggle_dir()
   local node = get_node_at_cursor()
   if not node or not node.is_dir then
@@ -671,8 +694,8 @@ end
 local function apply_keymaps()
   local km = config.keymaps
   map(km.open, open_node)
-  map("<LeftMouse>", open_node)
-  map("<2-LeftMouse>", open_node)
+  map("<LeftMouse>", mouse_open_node)
+  map("<2-LeftMouse>", mouse_open_node)
   map(km.toggle_dir, toggle_dir)
   map(km.collapse_dir, collapse_dir)
   map(km.filter, start_filter)
