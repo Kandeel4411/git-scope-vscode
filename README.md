@@ -80,9 +80,20 @@ Create `~/.config/nvim/lua/plugins/git-scope.lua`:
 return {
   {
     "Kandeel4411/git-scope-vscode",
+    lazy = true,
+    cmd = { "GitScope" },
+    keys = {
+      {
+        "gs",
+        function()
+          vim.cmd("GitScope")
+        end,
+        desc = "Git Scope",
+        mode = "n",
+      },
+    },
     config = function()
       require("git_scope").setup()
-      vim.keymap.set("n", "<leader>gs", "<cmd>GitScope<cr>", { desc = "Open Git Scope" })
     end,
   },
 }

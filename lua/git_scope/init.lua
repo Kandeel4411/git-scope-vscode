@@ -495,6 +495,11 @@ local function apply_keymaps()
 end
 
 function M.open()
+  if state.win and vim.api.nvim_win_is_valid(state.win) then
+    vim.api.nvim_set_current_win(state.win)
+    return
+  end
+
   state.prev_win = vim.api.nvim_get_current_win()
   state.root = vim.loop.cwd()
   state.filter_query = ""
@@ -509,6 +514,10 @@ function M.setup(opts)
   config = vim.tbl_deep_extend("force", vim.deepcopy(defaults), opts or {})
   setup_highlights()
   vim.api.nvim_create_user_command("GitScope", function()
+    if state.win and vim.api.nvim_win_is_valid(state.win) then
+      close_win()
+      return
+    end
     M.open()
   end, {})
 end
