@@ -671,6 +671,8 @@ end
 local function apply_keymaps()
   local km = config.keymaps
   map(km.open, open_node)
+  map("<LeftMouse>", open_node)
+  map("<2-LeftMouse>", open_node)
   map(km.toggle_dir, toggle_dir)
   map(km.collapse_dir, collapse_dir)
   map(km.filter, start_filter)
