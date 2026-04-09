@@ -737,4 +737,19 @@ function M.setup(opts)
   end, {})
 end
 
+M._test = {
+  badge_hl_for = badge_hl_for,
+  file_hl_for = file_hl_for,
+  extension_hl_for = extension_hl_for,
+  status_to_badge = status_to_badge,
+  parse_change = parse_change,
+  to_relpath = to_relpath,
+  is_git_ignored = is_git_ignored,
+  set_state = function(partial)
+    for k, v in pairs(partial or {}) do
+      state[k] = v
+    end
+  end,
+}
+
 return M

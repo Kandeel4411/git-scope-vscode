@@ -1,79 +1,61 @@
 # Git Scope
 
-A VS Code extension that cuts through the noise — showing only the directories and files that have **git changes** in a dedicated activity bar view.
+Git Scope is a focused file explorer for changed files.
 
-Stop hunting through your entire project tree. Git Scope surfaces exactly what you're working on.
+It shows only directories and files touched by git status, so you can work inside active paths without scanning the full project tree.
 
----
+## Highlights
 
-## Features
+- Dedicated activity bar view called **Changed Directories**
+- Git status badges on files and roots
+- Quick file actions from tree context menu
+- Automatic refresh when git index or filesystem state changes
+- Neovim module at `lua/git_scope/init.lua`
 
-### Changed Directories View
-A focused file explorer in the activity bar showing only top-level directories and files with git modifications. Expand any directory to browse its full contents.
+## Status Badges
 
-### Git Status Badges
-Each item is annotated with its git status at a glance:
+- `M`: Modified
+- `A`: Added
+- `D`: Deleted
+- `U`: Untracked
+- `R`: Renamed
+- `C`: Conflict
 
-| Badge | Meaning |
-|-------|---------|
-| `M` | Modified |
-| `A` | Added |
-| `D` | Deleted |
-| `U` | Untracked |
-| `R` | Renamed |
-| `C` | Conflicted |
+Hovering an item shows staged and unstaged status details.
 
-Hover over any item for a detailed tooltip showing both staged and unstaged status.
+## File Actions
 
-### File Operations
-Right-click any item in the view for a context menu with:
-- **New File** — create a file inside the selected directory
-- **New Folder** — create a nested directory structure
-- **Rename** — rename files and folders inline
-- **Delete** — delete with a confirmation prompt
+From the tree view context menu:
 
-### Real-time Updates
-The view automatically refreshes when:
-- Files are staged or unstaged
-- Commits are made
-- Files are created or deleted on disk
+- **New File**
+- **New Folder**
+- **Rename**
+- **Delete** with confirmation
 
----
+## Getting Started in VS Code
 
-## Getting Started
+1. Open a git repository in VS Code.
+2. Select the **Git Scope** icon in the activity bar.
+3. Use the **Changed Directories** tree to browse changed paths.
 
-1. Open any git repository in VS Code
-2. Click the **Git Scope** icon in the activity bar (folder + branch icon)
-3. The **Changed Directories** panel will show all paths with git modifications
+Activation is automatic when a `.git` directory exists in the workspace.
 
-> Git Scope activates automatically when a `.git` folder is detected in your workspace.
+## Keybindings
 
----
+When the Git Scope tree has focus:
 
-## Keybindings (VS Code + Neovim)
+- `Enter` or `l`: Open file or expand folder
+- `h`: Collapse folder
+- `/`: Start filter input in Neovim
+- `a`: New file
+- `A`: New folder
+- `r`: Rename
+- `s`: Stage or unstage file or directory in Neovim
+- `d`: Delete
+- `R`: Refresh
+- `q`: Close Git Scope window in Neovim
 
-When the **Git Scope** tree is focused, these keys are available:
-
-| Key | Action |
-|-----|--------|
-| `Enter` / `l` | Open file / expand folder |
-| `h` | Collapse folder |
-| `/` | Start grep-style filter (Neovim) |
-| `a` | New file |
-| `A` | New folder |
-| `r` | Rename |
-| `s` | Stage / unstage selected file or directory (Neovim) |
-| `d` | Delete |
-| `R` | Refresh |
-| `q` | Close Git Scope window (Neovim) |
-
----
-
-## LazyVim / Neovim Support
-
-Git Scope now includes a native Neovim module at `lua/git_scope/init.lua` so you can use the same focused changed-files explorer flow in LazyVim.
-
-### Install in LazyVim
+## LazyVim and Neovim
 
 Create `~/.config/nvim/lua/plugins/git-scope.lua`:
 
@@ -102,43 +84,42 @@ return {
 
 Then run `:Lazy sync` and restart Neovim.
 
-### Usage
+Usage notes:
 
-- Run `:GitScope` (or your mapped `gs`) in any git repo.
-- The panel opens in a left split and shows only changed top-level paths.
-- Expand folders to browse all contents, then use the same keybindings table above.
-- Press `s` on a file or directory to stage it; press `s` again to unstage it.
-
-> Note: the Neovim module shells out to `git status --porcelain`, so `git` must be available in your PATH.
-
----
+- Run `:GitScope` in any git repo.
+- The panel opens in a left split.
+- Use `s` to stage a file or directory.
+- Use `s` again to unstage it.
 
 ## Requirements
 
 - VS Code `1.85.0` or later
-- `git` installed and available in your `PATH`
-
----
+- Git available in your `PATH`
 
 ## Development
 
 ```bash
-# Install dependencies
 npm install
-
-# Compile TypeScript
 npm run compile
-
-# Watch mode
 npm run watch
-
-# Package extension
+npm run test
 npm run package
 ```
 
-Press `F5` in VS Code to launch an Extension Development Host with Git Scope loaded.
+Press `F5` in VS Code to launch an Extension Development Host.
 
----
+## Contributing
+
+For contribution workflow and hook setup, see `CONTRIBUTING.md`.
+
+Quick start:
+
+```bash
+pip install pre-commit
+pre-commit install
+npm test
+pre-commit run -a
+```
 
 ## License
 
