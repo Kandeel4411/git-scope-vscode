@@ -2,9 +2,9 @@ name: Release
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
-    branches: [master]
+    branches: [main]
 
 jobs:
   release:
@@ -25,11 +25,10 @@ jobs:
       - name: Install Lua
         run: |
           sudo apt-get update
-          sudo apt-get install -y lua5.1
-          sudo update-alternatives --install /usr/bin/lua lua /usr/bin/lua5.1 100
+          sudo apt-get install -y lua5.4
 
       - name: Run tests
-        run: npm test
+        run: LUA_BIN=lua5.4 npm test
 
       - name: Package
         run: npm run package

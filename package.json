@@ -134,7 +134,7 @@
     "watch": "tsc -watch -p ./",
     "package": "vsce package --no-dependencies",
     "pretest": "npm run compile",
-    "test:lua": "lua test/lua/git_scope_test.lua",
+    "test:lua": "sh -c '${LUA_BIN:-lua} test/lua/git_scope_test.lua'",
     "test:js": "mocha \"test/**/*.test.js\"",
     "test": "npm run test:lua && npm run test:js"
   },
