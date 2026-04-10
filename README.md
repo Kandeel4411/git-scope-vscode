@@ -1,6 +1,6 @@
-# Git Scope
+# Git File Explorer
 
-Git Scope is a focused file explorer for changed files.
+Git File Explorer is a focused file explorer for changed files.
 
 It shows only directories and files touched by git status, so you can work inside active paths without scanning the full project tree.
 
@@ -10,7 +10,7 @@ It shows only directories and files touched by git status, so you can work insid
 - Git status badges on files and roots
 - Quick file actions from tree context menu
 - Automatic refresh when git index or filesystem state changes
-- Neovim module at `lua/git_scope/init.lua`
+- Neovim module at `lua/git_file_explorer/init.lua`
 
 ## Status Badges
 
@@ -35,14 +35,14 @@ From the tree view context menu:
 ## Getting Started in VS Code
 
 1. Open a git repository in VS Code.
-2. Select the **Git Scope** icon in the activity bar.
+2. Select the **Git File Explorer** icon in the activity bar.
 3. Use the **Changed Directories** tree to browse changed paths.
 
 Activation is automatic when a `.git` directory exists in the workspace.
 
 ## Keybindings
 
-When the Git Scope tree has focus:
+When the Git File Explorer tree has focus:
 
 - `Enter` or `l`: Open file or expand folder
 - `h`: Collapse folder
@@ -53,30 +53,30 @@ When the Git Scope tree has focus:
 - `s`: Stage or unstage file or directory in Neovim
 - `d`: Delete
 - `R`: Refresh
-- `q`: Close Git Scope window in Neovim
+- `q`: Close Git File Explorer window in Neovim
 
 ## LazyVim and Neovim
 
-Create `~/.config/nvim/lua/plugins/git-scope.lua`:
+Create `~/.config/nvim/lua/plugins/git-file-explorer.lua`:
 
 ```lua
 return {
   {
-    "Kandeel4411/git-scope-vscode",
+    "Kandeel4411/git-file-explorer",
     lazy = true,
-    cmd = { "GitScope" },
+    cmd = { "GitFileExplorer" },
     keys = {
       {
         "gs",
         function()
-          vim.cmd("GitScope")
+          vim.cmd("GitFileExplorer")
         end,
-        desc = "Git Scope",
+        desc = "Git File Explorer",
         mode = "n",
       },
     },
     config = function()
-      require("git_scope").setup()
+      require("git_file_explorer").setup()
     end,
   },
 }
@@ -86,7 +86,7 @@ Then run `:Lazy sync` and restart Neovim.
 
 Usage notes:
 
-- Run `:GitScope` in any git repo.
+- Run `:GitFileExplorer` in any git repo.
 - The panel opens in a left split.
 - Use `s` to stage a file or directory.
 - Use `s` again to unstage it.

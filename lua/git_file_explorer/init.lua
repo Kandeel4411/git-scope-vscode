@@ -32,7 +32,7 @@ local defaults = {
 
 local config = vim.deepcopy(defaults)
 
-local ns = vim.api.nvim_create_namespace("git_scope_highlights")
+local ns = vim.api.nvim_create_namespace("git_file_explorer_highlights")
 
 local function setup_highlights()
   vim.api.nvim_set_hl(0, "GitScopeTitle", { default = true, link = "Title" })
@@ -345,7 +345,7 @@ local function ensure_window()
   vim.bo[state.buf].buftype = "nofile"
   vim.bo[state.buf].swapfile = false
   vim.bo[state.buf].modifiable = false
-  vim.bo[state.buf].filetype = "git_scope"
+  vim.bo[state.buf].filetype = "git_file_explorer"
   vim.wo[state.win].number = false
   vim.wo[state.win].relativenumber = false
   vim.wo[state.win].signcolumn = "no"
@@ -398,7 +398,7 @@ local function render()
     return node_lines, node_entries, matched
   end
 
-  local title = "Git Scope"
+  local title = "Git File Explorer"
   if has_filter() then
     title = title .. " [/" .. state.filter_query .. "]"
   end
@@ -682,7 +682,7 @@ local function close_win()
 end
 
 local function start_filter()
-  local input = vim.fn.input("Git Scope / ", state.filter_query or "")
+  local input = vim.fn.input("Git File Explorer / ", state.filter_query or "")
   state.filter_query = vim.trim(input or "")
   render()
 end

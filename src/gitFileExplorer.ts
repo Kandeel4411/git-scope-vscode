@@ -35,14 +35,14 @@ export class GitNode extends vscode.TreeItem {
   }
 }
 
-export class GitExplorerProvider
+export class GitFileExplorerProvider
   implements
     vscode.TreeDataProvider<GitNode>,
     vscode.FileDecorationProvider,
     vscode.TreeDragAndDropController<GitNode>
 {
-  readonly dropMimeTypes = ['application/vnd.code.tree.gitExplorer'];
-  readonly dragMimeTypes = ['application/vnd.code.tree.gitExplorer'];
+  readonly dropMimeTypes = ['application/vnd.code.tree.gitFileExplorer'];
+  readonly dragMimeTypes = ['application/vnd.code.tree.gitFileExplorer'];
   private _onDidChangeTreeData = new vscode.EventEmitter<GitNode | undefined | null>();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
@@ -141,13 +141,13 @@ export class GitExplorerProvider
 
   handleDrag(source: readonly GitNode[], dataTransfer: vscode.DataTransfer): void {
     dataTransfer.set(
-      'application/vnd.code.tree.gitExplorer',
+      'application/vnd.code.tree.gitFileExplorer',
       new vscode.DataTransferItem(source),
     );
   }
 
   async handleDrop(target: GitNode | undefined, dataTransfer: vscode.DataTransfer): Promise<void> {
-    const transferItem = dataTransfer.get('application/vnd.code.tree.gitExplorer');
+    const transferItem = dataTransfer.get('application/vnd.code.tree.gitFileExplorer');
     if (!transferItem) return;
 
     const sources: GitNode[] = transferItem.value;

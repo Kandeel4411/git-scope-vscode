@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for contributing to Git Scope.
+Thanks for contributing to Git File Explorer.
 
 ## Local setup
 
@@ -24,7 +24,7 @@ Thanks for contributing to Git Scope.
 Tests are required for all functionality changes.
 
 - If you change TypeScript logic, update or add tests in `test/*.test.js`.
-- If you change Neovim Lua logic, update or add tests in `test/lua/git_scope_test.lua`.
+- If you change Neovim Lua logic, update or add tests in `test/lua/git_file_explorer_test.lua`.
 - If behavior changes, tests must verify the new behavior and any regression risk.
 
 Pull requests that change behavior without tests are considered incomplete.

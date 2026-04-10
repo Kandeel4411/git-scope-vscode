@@ -219,7 +219,7 @@ _G.vim = {
 }
 
 package.path = "./lua/?.lua;./lua/?/init.lua;" .. package.path
-local mod = require("git_scope")
+local mod = require("git_file_explorer")
 local t = mod._test
 
 local function add_test(name, fn)

@@ -1,9 +1,9 @@
 {
-  "name": "git-scope",
-  "displayName": "Git Scope",
+  "name": "git-file-explorer",
+  "displayName": "Git File Explorer",
   "publisher": "Kandeel4411",
   "description": "Explorer filtered to git-changed directories — browse and edit within them",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "engines": {
     "vscode": "^1.110.0"
   },
@@ -12,6 +12,10 @@
     "SCM Providers",
     "Visualization"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Kandeel4411/git-file-explorer.git"
+  },
   "activationEvents": [
     "workspaceContains:.git"
   ],
@@ -20,111 +24,111 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "gitExplorerContainer",
-          "title": "Git Scope",
+          "id": "gitFileExplorerContainer",
+          "title": "Git File Explorer",
           "icon": "assets/icon.svg"
         }
       ]
     },
     "views": {
-      "gitExplorerContainer": [
+      "gitFileExplorerContainer": [
         {
-          "id": "gitExplorer",
+          "id": "gitFileExplorer",
           "name": "Changed Directories"
         }
       ]
     },
     "commands": [
       {
-        "command": "gitExplorer.refresh",
+        "command": "gitFileExplorer.refresh",
         "title": "Refresh",
         "icon": "$(refresh)"
       },
       {
-        "command": "gitExplorer.newFile",
+        "command": "gitFileExplorer.newFile",
         "title": "New File...",
         "icon": "$(new-file)"
       },
       {
-        "command": "gitExplorer.newFolder",
+        "command": "gitFileExplorer.newFolder",
         "title": "New Folder...",
         "icon": "$(new-folder)"
       },
       {
-        "command": "gitExplorer.deleteItem",
+        "command": "gitFileExplorer.deleteItem",
         "title": "Delete",
         "icon": "$(trash)"
       },
       {
-        "command": "gitExplorer.renameItem",
+        "command": "gitFileExplorer.renameItem",
         "title": "Rename...",
         "icon": "$(edit)"
       }
     ],
     "keybindings": [
       {
-        "command": "gitExplorer.refresh",
+        "command": "gitFileExplorer.refresh",
         "key": "shift+r",
-        "when": "view == gitExplorer && listFocus"
+        "when": "view == gitFileExplorer && listFocus"
       },
       {
-        "command": "gitExplorer.newFile",
+        "command": "gitFileExplorer.newFile",
         "key": "a",
-        "when": "view == gitExplorer && listFocus"
+        "when": "view == gitFileExplorer && listFocus"
       },
       {
-        "command": "gitExplorer.newFolder",
+        "command": "gitFileExplorer.newFolder",
         "key": "shift+a",
-        "when": "view == gitExplorer && listFocus"
+        "when": "view == gitFileExplorer && listFocus"
       },
       {
-        "command": "gitExplorer.renameItem",
+        "command": "gitFileExplorer.renameItem",
         "key": "r",
-        "when": "view == gitExplorer && listFocus"
+        "when": "view == gitFileExplorer && listFocus"
       },
       {
-        "command": "gitExplorer.deleteItem",
+        "command": "gitFileExplorer.deleteItem",
         "key": "d",
-        "when": "view == gitExplorer && listFocus"
+        "when": "view == gitFileExplorer && listFocus"
       }
     ],
     "menus": {
       "view/title": [
         {
-          "command": "gitExplorer.refresh",
-          "when": "view == gitExplorer",
+          "command": "gitFileExplorer.refresh",
+          "when": "view == gitFileExplorer",
           "group": "navigation"
         },
         {
-          "command": "gitExplorer.newFile",
-          "when": "view == gitExplorer",
+          "command": "gitFileExplorer.newFile",
+          "when": "view == gitFileExplorer",
           "group": "navigation"
         },
         {
-          "command": "gitExplorer.newFolder",
-          "when": "view == gitExplorer",
+          "command": "gitFileExplorer.newFolder",
+          "when": "view == gitFileExplorer",
           "group": "navigation"
         }
       ],
       "view/item/context": [
         {
-          "command": "gitExplorer.newFile",
-          "when": "view == gitExplorer && viewItem == directory",
+          "command": "gitFileExplorer.newFile",
+          "when": "view == gitFileExplorer && viewItem == directory",
           "group": "1_new@1"
         },
         {
-          "command": "gitExplorer.newFolder",
-          "when": "view == gitExplorer && viewItem == directory",
+          "command": "gitFileExplorer.newFolder",
+          "when": "view == gitFileExplorer && viewItem == directory",
           "group": "1_new@2"
         },
         {
-          "command": "gitExplorer.renameItem",
-          "when": "view == gitExplorer",
+          "command": "gitFileExplorer.renameItem",
+          "when": "view == gitFileExplorer",
           "group": "2_edit@1"
         },
         {
-          "command": "gitExplorer.deleteItem",
-          "when": "view == gitExplorer",
+          "command": "gitFileExplorer.deleteItem",
+          "when": "view == gitFileExplorer",
           "group": "2_edit@2"
         }
       ]
@@ -135,7 +139,7 @@
     "watch": "tsc -watch -p ./",
     "package": "vsce package --no-dependencies",
     "pretest": "npm run compile",
-    "test:lua": "sh -c '${LUA_BIN:-lua} test/lua/git_scope_test.lua'",
+    "test:lua": "sh -c '${LUA_BIN:-lua} test/lua/git_file_explorer_test.lua'",
     "test:js": "mocha \"test/**/*.test.js\"",
     "test": "npm run test:lua && npm run test:js"
   },

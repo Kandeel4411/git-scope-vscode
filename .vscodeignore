@@ -1,0 +1,10 @@
+.github/
+.vscode/
+src/
+test/
+lua/
+.gitignore
+.pre-commit-config.yaml
+tsconfig.json
+install-latest.sh
+SECURITY.md

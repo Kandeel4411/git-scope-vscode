@@ -52,7 +52,7 @@ describe('extension activation', () => {
 
     const extension = proxyquire.noCallThru().load('../out/extension', {
       vscode: vscodeMock,
-      './gitExplorer': { GitExplorerProvider: MockProvider },
+      './gitFileExplorer': { GitFileExplorerProvider: MockProvider },
     });
 
     extension.activate({ subscriptions });
@@ -62,11 +62,11 @@ describe('extension activation', () => {
     assert.deepEqual(
       commands.map((c) => c.name).sort(),
       [
-        'gitExplorer.deleteItem',
-        'gitExplorer.newFile',
-        'gitExplorer.newFolder',
-        'gitExplorer.refresh',
-        'gitExplorer.renameItem',
+        'gitFileExplorer.deleteItem',
+        'gitFileExplorer.newFile',
+        'gitFileExplorer.newFolder',
+        'gitFileExplorer.refresh',
+        'gitFileExplorer.renameItem',
       ],
     );
     assert.equal(watchers.length, 2);

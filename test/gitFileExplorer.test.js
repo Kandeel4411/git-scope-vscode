@@ -78,18 +78,18 @@ function loadGitExplorer(repoRoot, changedPaths) {
     getIgnoredPaths: () => new Set(),
   };
 
-  const mod = proxyquire.noCallThru().load('../out/gitExplorer', {
+  const mod = proxyquire.noCallThru().load('../out/gitFileExplorer', {
     vscode: vscodeMock,
     './gitStatus': gitStatusMock,
   });
   return { ...mod, vscodeMock, calls };
 }
 
-describe('GitExplorerProvider', () => {
+describe('GitFileExplorerProvider', () => {
   let repoRoot;
 
   beforeEach(() => {
-    repoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'git-scope-'));
+    repoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'git-file-explorer-'));
     fs.mkdirSync(path.join(repoRoot, 'src'));
     fs.writeFileSync(path.join(repoRoot, 'src', 'app.ts'), 'console.log(1);');
     fs.writeFileSync(path.join(repoRoot, 'README.md'), '# docs');
@@ -104,8 +104,8 @@ describe('GitExplorerProvider', () => {
       [path.join(repoRoot, 'README.md'), { x: 'M', y: ' ', badge: 'M', color: 'modified' }],
       [path.join(repoRoot, 'src', 'app.ts'), { x: 'M', y: ' ', badge: 'M', color: 'modified' }],
     ]);
-    const { GitExplorerProvider } = loadGitExplorer(repoRoot, changed);
-    const provider = new GitExplorerProvider();
+    const { GitFileExplorerProvider } = loadGitExplorer(repoRoot, changed);
+    const provider = new GitFileExplorerProvider();
     const roots = provider.getChildren();
     assert.equal(roots.length, 2);
     assert.equal(roots[0].label, 'src');
@@ -115,8 +115,8 @@ describe('GitExplorerProvider', () => {
   it('provides file decorations using git metadata', () => {
     const filePath = path.join(repoRoot, 'src', 'app.ts');
     const changed = new Map([[filePath, { x: 'M', y: ' ', badge: 'M', color: 'modified' }]]);
-    const { GitExplorerProvider } = loadGitExplorer(repoRoot, changed);
-    const provider = new GitExplorerProvider();
+    const { GitFileExplorerProvider } = loadGitExplorer(repoRoot, changed);
+    const provider = new GitFileExplorerProvider();
     const deco = provider.provideFileDecoration({ fsPath: filePath });
     assert.equal(deco.badge, 'M');
     assert.equal(deco.tooltip, 'Git: M ');
@@ -131,7 +131,7 @@ describe('GitExplorerProvider', () => {
     const loaded = loadGitExplorer(repoRoot, changed);
     loaded.vscodeMock.window.showInputBox = async () => 'new.ts';
 
-    const provider = new loaded.GitExplorerProvider();
+    const provider = new loaded.GitFileExplorerProvider();
     const srcNode = provider.getChildren().find((n) => n.label === 'src');
     await provider.newFile(srcNode);
 
@@ -148,7 +148,7 @@ describe('GitExplorerProvider', () => {
     loaded.vscodeMock.window.showInputBox = async () => 'README2.md';
     loaded.vscodeMock.window.showWarningMessage = async () => 'Delete';
 
-    const provider = new loaded.GitExplorerProvider();
+    const provider = new loaded.GitFileExplorerProvider();
     const readmeNode = provider.getChildren().find((n) => n.label === 'README.md');
     await provider.renameItem(readmeNode);
     assert.ok(fs.existsSync(newPath));
@@ -167,7 +167,7 @@ describe('GitExplorerProvider', () => {
       [path.join(repoRoot, 'src', 'app.ts'), { x: 'M', y: ' ', badge: 'M', color: 'modified' }],
     ]);
     const loaded = loadGitExplorer(repoRoot, changed);
-    const provider = new loaded.GitExplorerProvider();
+    const provider = new loaded.GitFileExplorerProvider();
 
     const srcNode = provider.getChildren().find((n) => n.label === 'src');
     const targetNode = provider.getChildren(srcNode).find((n) => n.label === 'nested');

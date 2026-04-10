@@ -11,7 +11,7 @@
 
 ### Changed
 - Added publisher field (`Kandeel4411`)
-- Renamed extension to **Git Scope**
+- Renamed extension to **Git File Explorer**
 - Replaced activity bar icon with custom SVG (folder + git branch)
 
 ## [0.0.1] - 2026-03-16
