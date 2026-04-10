@@ -1,6 +1,6 @@
 {
   "name": "git-scope-explorer",
-  "displayName": "Git File Explorer",
+  "displayName": "Git Scope Explorer",
   "publisher": "Kandeel4411",
   "description": "Explorer filtered to git-changed directories — browse and edit within them",
   "version": "0.0.4",
