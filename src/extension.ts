@@ -19,6 +19,8 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand('gitFileExplorer.newFolder', (node) => provider.newFolder(node)),
     vscode.commands.registerCommand('gitFileExplorer.deleteItem', (node) => provider.deleteItem(node)),
     vscode.commands.registerCommand('gitFileExplorer.renameItem', (node) => provider.renameItem(node)),
+    vscode.commands.registerCommand('gitFileExplorer.focusDir', (node) => provider.focusDir(node)),
+    vscode.commands.registerCommand('gitFileExplorer.unfocusDir', (node) => provider.unfocusDir(node)),
   );
 
   // Refresh on git index changes (stage/unstage/commit)

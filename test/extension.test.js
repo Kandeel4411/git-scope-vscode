@@ -13,6 +13,8 @@ describe('extension activation', () => {
       newFolder() {}
       deleteItem() {}
       renameItem() {}
+      focusDir() {}
+      unfocusDir() {}
     }
 
     function makeWatcher() {
@@ -57,16 +59,18 @@ describe('extension activation', () => {
 
     extension.activate({ subscriptions });
 
-    assert.ok(subscriptions.length >= 8);
-    assert.equal(commands.length, 5);
+    assert.ok(subscriptions.length >= 10);
+    assert.equal(commands.length, 7);
     assert.deepEqual(
       commands.map((c) => c.name).sort(),
       [
         'gitFileExplorer.deleteItem',
+        'gitFileExplorer.focusDir',
         'gitFileExplorer.newFile',
         'gitFileExplorer.newFolder',
         'gitFileExplorer.refresh',
         'gitFileExplorer.renameItem',
+        'gitFileExplorer.unfocusDir',
       ],
     );
     assert.equal(watchers.length, 2);

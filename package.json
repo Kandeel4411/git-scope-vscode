@@ -63,6 +63,16 @@
         "command": "gitFileExplorer.renameItem",
         "title": "Rename...",
         "icon": "$(edit)"
+      },
+      {
+        "command": "gitFileExplorer.focusDir",
+        "title": "Hide Unchanged Files",
+        "icon": "$(filter)"
+      },
+      {
+        "command": "gitFileExplorer.unfocusDir",
+        "title": "Show All Files",
+        "icon": "$(clear-all)"
       }
     ],
     "keybindings": [
@@ -113,13 +123,23 @@
       "view/item/context": [
         {
           "command": "gitFileExplorer.newFile",
-          "when": "view == gitFileExplorer && viewItem == directory",
+          "when": "view == gitFileExplorer && viewItem =~ /^directory/",
           "group": "1_new@1"
         },
         {
           "command": "gitFileExplorer.newFolder",
-          "when": "view == gitFileExplorer && viewItem == directory",
+          "when": "view == gitFileExplorer && viewItem =~ /^directory/",
           "group": "1_new@2"
+        },
+        {
+          "command": "gitFileExplorer.focusDir",
+          "when": "view == gitFileExplorer && viewItem == directory",
+          "group": "3_focus@1"
+        },
+        {
+          "command": "gitFileExplorer.unfocusDir",
+          "when": "view == gitFileExplorer && viewItem == directoryFocused",
+          "group": "3_focus@1"
         },
         {
           "command": "gitFileExplorer.renameItem",

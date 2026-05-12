@@ -51,6 +51,7 @@ export class GitFileExplorerProvider
 
   private changedPaths: Map<string, GitChange> = new Map();
   private ignoredPaths: Set<string> = new Set();
+  private focusedDirs: Set<string> = new Set();
   private workspaceRoot: string;
 
   constructor() {
@@ -110,7 +111,11 @@ export class GitFileExplorerProvider
       .map(([name, change]) => {
         const fullPath = path.join(this.workspaceRoot, name);
         const isDir = fs.existsSync(fullPath) && fs.statSync(fullPath).isDirectory();
-        return new GitNode(name, fullPath, isDir, change);
+        const node = new GitNode(name, fullPath, isDir, change);
+        if (isDir && this.focusedDirs.has(fullPath)) {
+          node.contextValue = 'directoryFocused';
+        }
+        return node;
       })
       .sort((a, b) => {
         if (a.isDirectory !== b.isDirectory) return a.isDirectory ? -1 : 1;
@@ -120,13 +125,28 @@ export class GitFileExplorerProvider
 
   private getDirectoryChildren(dirPath: string): GitNode[] {
     try {
+      const isFocused = this.focusedDirs.has(dirPath);
       const entries = fs.readdirSync(dirPath, { withFileTypes: true });
       return entries
-        .filter((e) => e.name !== '.git' && !this.ignoredPaths.has(path.join(dirPath, e.name)))
+        .filter((e) => {
+          if (e.name === '.git') return false;
+          const fullPath = path.join(dirPath, e.name);
+          if (this.ignoredPaths.has(fullPath)) return false;
+          if (isFocused) {
+            if (this.changedPaths.has(fullPath)) return true;
+            if (e.isDirectory() && this.hasChangedDescendant(fullPath)) return true;
+            return false;
+          }
+          return true;
+        })
         .map((e) => {
           const fullPath = path.join(dirPath, e.name);
           const change = this.changedPaths.get(fullPath);
-          return new GitNode(e.name, fullPath, e.isDirectory(), change);
+          const node = new GitNode(e.name, fullPath, e.isDirectory(), change);
+          if (e.isDirectory() && this.focusedDirs.has(fullPath)) {
+            node.contextValue = 'directoryFocused';
+          }
+          return node;
         })
         .sort((a, b) => {
           if (a.isDirectory !== b.isDirectory) return a.isDirectory ? -1 : 1;
@@ -135,6 +155,25 @@ export class GitFileExplorerProvider
     } catch {
       return [];
     }
+  }
+
+  private hasChangedDescendant(dirPath: string): boolean {
+    const prefix = dirPath + path.sep;
+    for (const changedPath of this.changedPaths.keys()) {
+      if (changedPath.startsWith(prefix)) return true;
+    }
+    return false;
+  }
+
+  focusDir(node: GitNode): void {
+    if (!node.isDirectory) return;
+    this.focusedDirs.add(node.fsPath);
+    this._onDidChangeTreeData.fire(undefined);
+  }
+
+  unfocusDir(node: GitNode): void {
+    this.focusedDirs.delete(node.fsPath);
+    this._onDidChangeTreeData.fire(undefined);
   }
 
   // ── Drag and drop ──────────────────────────────────────────────────────────
