@@ -3,9 +3,9 @@
   "displayName": "Git Scope Explorer",
   "publisher": "Kandeel4411",
   "description": "Explorer filtered to git-changed directories \u2014 browse and edit within them",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "engines": {
-    "vscode": "^1.110.0"
+    "vscode": "^1.85.0"
   },
   "icon": "assets/icon.png",
   "categories": [
@@ -147,7 +147,7 @@
     "@types/mocha": "^10.0.10",
     "@types/node": "^20.0.0",
     "@types/proxyquire": "^1.3.31",
-    "@types/vscode": "^1.110.0",
+    "@types/vscode": "^1.85.0",
     "@vscode/vsce": "^3.7.1",
     "mocha": "^11.7.5",
     "proxyquire": "^2.1.3",
