@@ -35,7 +35,11 @@ jobs:
 
       - name: Publish to VS Code Marketplace
         if: github.event_name == 'push'
-        run: npx vsce publish --no-dependencies --pat ${{ secrets.VSCE_PAT }}
+        run: npx vsce publish --no-dependencies --pat ${{ secrets.VSCE_PAT }} || true
+
+      - name: Publish to Open VSX (Cursor Marketplace)
+        if: github.event_name == 'push'
+        run: npx ovsx publish --pat ${{ secrets.OVSX_PAT }} || true
 
       - name: Get version
         id: version
